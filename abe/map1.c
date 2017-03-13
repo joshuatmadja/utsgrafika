@@ -652,7 +652,9 @@ int main() {
 					finish = 1;
 				}
 				else{
-					zoom_val*=2;
+					if(zoom_val<8){
+						zoom_val*=2;
+					}
 				}
 				break;
 			case 'x':

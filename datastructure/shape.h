@@ -37,6 +37,7 @@ public:
 	void Rotate(int theta);
 	void RotatePoros(int theta,Point poros);
 	void PlaneParabola(int theta,Point poros);
+	vector<Point> getEdges();
 
 
 	//set the center of rotation to P
@@ -45,8 +46,10 @@ public:
 	void erase();
 	void draw();
 	void scale(double x);
+	void zoom(Point center, double scale);
 	Point floodfill_seed;
 	vector<Point> edges;
+	vector<Point> edges_modified;
 	Point center;
 	Color Border;
 	Color Fill;

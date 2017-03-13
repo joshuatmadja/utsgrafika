@@ -119,15 +119,15 @@ void Print_Inside_Frame(){
           checked.push_back(temp);
       }
       else if (world_shape[i]->getEdgesModified()[j].getX() > 500){
-          Point temp(100, world_shape[i]->getEdgesModified()[j].getY());
+          Point temp(500, world_shape[i]->getEdgesModified()[j].getY());
           checked.push_back(temp);
       }
       else if (world_shape[i]->getEdgesModified()[j].getY() < 100){
           Point temp(world_shape[i]->getEdgesModified()[j].getY(), 100);
           checked.push_back(temp);
       }
-      if (world_shape[i]->getEdgesModified()[j].getY() > 500){
-          Point temp(world_shape[i]->getEdgesModified()[j].getY(), 100);
+      else if (world_shape[i]->getEdgesModified()[j].getY() > 500){
+          Point temp(world_shape[i]->getEdgesModified()[j].getY(), 500);
           checked.push_back(temp);
       }
     }

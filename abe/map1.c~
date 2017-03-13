@@ -518,7 +518,7 @@ int main() {
     int i,j;
     char ch;
 //    drawOver();
-    loadBuildings4("gameOver.txt");
+    loadBuildings4("buildings.txt");
     float zoom_val = 1;
     char stroke;
     int alreadyPaintBuilding = 1;

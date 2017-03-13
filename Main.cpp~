@@ -30,7 +30,7 @@ void BuildRandomShape(){
   int n = rand() % 10;
   int i, j;
   for (i = 0; i < n; i++){
-    Color c(255, 255, 255);
+    Color c(rand()%255, rand()%255, rand()%255);
     int rnd_num = rand() % 3;
     vector<Point> v;
     Point center(rand() % 200 + 200, rand() % 200 + 200);

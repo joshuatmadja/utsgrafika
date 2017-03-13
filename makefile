@@ -1,5 +1,5 @@
 all:
-	g++ -o Main Main.cpp datastructure/*.cpp -std=c++0x
+	g++ -o main main.cpp datastructure/*.cpp -std=c++11
 
 clean:
 	rm main *.o

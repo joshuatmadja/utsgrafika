@@ -215,9 +215,24 @@ void Shape::zoom(Point center, double scale){
 		for(int j = 0;j < p_size; ++j){
 			edges_modified[j] = edges[j].scaleUp(center,scale);
 		}
-    draw();
 }
 
 vector<Point> Shape::getEdges(){
 	return edges;
+}
+
+vector<Point> Shape::getEdgesModified(){
+	return edges_modified;
+}
+
+Color Shape::getFill(){
+	return Fill;
+}
+
+Color Shape::getBorder(){
+	return Border;
+}
+
+Point Shape::getFloodFill_Seed(){
+	return floodfill_seed;
 }

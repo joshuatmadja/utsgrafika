@@ -516,7 +516,7 @@ int main() {
     loadBuildings4();
     //loadStreet();
     //loadTree();
-    float zoom_val = 2;
+    float zoom_val = 1;
     char stroke;
     int alreadyPaintBuilding = 1;
     int alreadyPaintTree = 1;

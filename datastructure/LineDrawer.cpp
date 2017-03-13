@@ -1,6 +1,5 @@
 #include <iostream>
 #include "LineDrawer.h"
-#include "Screen.h"
 #include <cmath>
 #include <vector>
 #include <queue>
@@ -46,7 +45,7 @@ int LineDrawer::getcode(Point P){
 
 
 int LineDrawer::getcode(double x, double y){
-	
+
 	int code = 0;
 	//Perform Bitwise OR to get outcode
 	if(y > yr) code |=TOP;
@@ -64,7 +63,7 @@ void LineDrawer::plotSlopPositiveLine (Point P1, Point P2, Color C) {
 	dY = abs(P2.getY() - P1.getY());
 	i = P1.getX();
 	j = P1.getY();
-	
+
 	if (dX >= dY) {
 		p = 2*dY - dX;
 
@@ -110,7 +109,7 @@ void LineDrawer::plotSlopNegativeLine (Point P1, Point P2, Color C) {
 	if (dX >= dY) {
 		i = P1.getX();
 		j = P1.getY();
-		p = 2*dY - dX;		
+		p = 2*dY - dX;
 
 		for (x=P1.getX(); x<=P2.getX(); x++) {
 			screen.setColor(j, x, C);
@@ -147,11 +146,11 @@ void LineDrawer::plotSlopNegativeLine (Point P1, Point P2, Color C) {
 
 void LineDrawer::plotVerticalLine (Point P1, Point P2, Color C) {
 	int j;
-	
+
 	if (P2.getY() < P1.getY()) {
-		P1.swapPoint(&P2);	
+		P1.swapPoint(&P2);
 	}
-	
+
 	for(j = P1.getY() ; j <= P2.getY(); j++) {
 		screen.setColor(j, P1.getX(), C);
 	}
@@ -209,7 +208,7 @@ void LineDrawer::drawBresenhamLine (Point P1, Point P2, Color C) {
 	if(accept){
 		P1 = Point(x0,y0),P2=Point(x1,y1);
 		if (P1.getX() > P2.getX()) {
-			P1.swapPoint(&P2); 
+			P1.swapPoint(&P2);
 		}
 
 		if ((P2.getX() >= P1.getX() && P1.getY() > P2.getY())) {
@@ -220,23 +219,23 @@ void LineDrawer::drawBresenhamLine (Point P1, Point P2, Color C) {
 		}
 		else {
 			plotSlopPositiveLine(P1,P2,C);
-		}	
+		}
 	}
 
-	
+
 }
 
 void LineDrawer::drawPolyline (vector<Point> P, Color C) {
-	
+
 	for (int i = 0;i < P.size()-1;i++) {
-		
+
 			drawBresenhamLine(P[i], P[i+1], C);
-			
+
 	}
 }
 
 void LineDrawer::drawPolygon (vector<Point> P, Color C) {
-	
+
 
 	if(P.size() <= 0)
 		return;
@@ -342,6 +341,6 @@ void LineDrawer::floodFill4Seed (int x, int y, Color cBorder, Color cNew) {
 		}
 	}
 
-	
-	
+
+
 }

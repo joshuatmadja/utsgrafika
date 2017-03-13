@@ -17,7 +17,7 @@ public:
 	void moveTo(int x, int y);
 	void rotate(int theta);
 	void rotatePoros(int theta, Point poros);
-	
+
 
 	double x;
 	double y;

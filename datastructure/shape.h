@@ -12,7 +12,7 @@ class Shape: public AbstractShape{
 
 public:
 
-	//Constructor, 
+	//Constructor,
 	//starting edge is collection of point that make the shape
 	Shape();
 	Shape(vector<Point>& starting_edge, Color C );
@@ -25,19 +25,19 @@ public:
 	void setFillColor(Color C);
 	//set Border Color to color c
 	void setBorderColor(Color c);
-	
+
 	//Move the object by delta
 	//deltaX : move the object in X axis by delta X
 	//deltaY : move the object in Y axis by delta Y
 	void moveBy(int deltaX, int deltaY);
 
 
-	//rotate the object by theta degree clockwise with 
+	//rotate the object by theta degree clockwise with
 	//cePoint center as  center of rotation
 	void Rotate(int theta);
 	void RotatePoros(int theta,Point poros);
 	void PlaneParabola(int theta,Point poros);
-	
+
 
 	//set the center of rotation to P
 	void setCenter(Point P);
@@ -53,4 +53,4 @@ public:
 
 };
 
-#endif                                                   
+#endif

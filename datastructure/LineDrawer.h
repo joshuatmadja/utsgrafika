@@ -30,7 +30,7 @@ public:
 	// C : border color
 	void drawPolygon (vector <Point> P, Color C);
 
-	//Draw circle 
+	//Draw circle
 	// radius : circle radius
 	// P : circle center
 	// C : border color
@@ -45,9 +45,9 @@ public:
 	void drawHalfCircle (int radius, Point P, Color C);
 	void floodFill4Seed (int x, int y, Color cBorder, Color cNew);
 
-	
+
 	int xl,yl,xr,yr;
-	
+
 private:
 	int getcode(Point P);
 	int getcode(double x, double y);
@@ -58,7 +58,7 @@ private:
 	void plot8pixel (Point P, int p, int q, Color C);
 
 
-	
+
 
 };
 

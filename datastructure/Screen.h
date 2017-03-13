@@ -16,8 +16,8 @@ class Screen{
 public :
 	Screen(); // Constructor
 	Color getColor(int r, int c); // Mendapatkan warna yang sedang ditampilkan pada baris ke r kolom ke c
-	void setColor(int r, int c, int red, int green, int blue); //set warna layar pada koordinat r,c 
-	void setColor(int r, int c, Color C); //set warna layar pada koordinat r,c 
+	void setColor(int r, int c, int red, int green, int blue); //set warna layar pada koordinat r,c
+	void setColor(int r, int c, Color C); //set warna layar pada koordinat r,c
 
 	int getWidth(); // mendapatkan width dari resolusi layar
 	int getHeight(); // mendapatkan height dari resolusi layar

@@ -14,12 +14,12 @@ Point::Point(int x, int y) {
 void Point::setPoint(int x, int y) {
 	this->x = x/1.00;
 	this->y = y/1.00;
-} 
+}
 
 void Point::setPoint(double x, double y) {
 	this->x = x;
 	this->y = y;
-} 
+}
 
 
 int Point::getX() {

@@ -10,13 +10,13 @@ class Circle: public AbstractShape{
 
 public:
 
-	//Constructor, 
+	//Constructor,
 	//Point
 	Circle();
 	Circle(Point P, int r, Color c );
 	//Destructor
 	~Circle();
-	
+
 	//set floodfill color
 	void setFillColor(Color C);
 	//set Border Color to color c
@@ -41,4 +41,4 @@ public:
 
 };
 
-#endif                                                   
+#endif

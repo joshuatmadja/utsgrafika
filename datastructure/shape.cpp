@@ -4,7 +4,7 @@
 #define EPS 0.00001
 using namespace std;
 
-//Below is used to determine wether a point is inside a polyon
+//Below is used to determine wether a point is inside a polygon
 //Code from Competitive Programming 3 chapter 7
 struct vec{
 	double x,y;
@@ -38,7 +38,7 @@ bool ccw(Point P, Point Q, Point R){
 
 bool is_inside_polygon(Point P, vector<Point> edges){
 	//Code from Competitive programming 3 page 287
-	
+
 	double sum = 0;
 	edges.push_back(edges[0]);
 	for(int i=0; i < (int) edges.size()-1; i++){
@@ -86,7 +86,7 @@ Point getFloodFillSeed( vector<Point>& edge){
 Shape::Shape(){
 	edges.clear();
 	Border = Color(0,0,0);
-	Fill = Color(0,0,0);	
+	Fill = Color(0,0,0);
 }
 
 Shape::Shape(vector<Point>& starting_edge, Color C ){
@@ -154,6 +154,7 @@ void Shape::erase(){
 	linedrawer.floodFill4Seed(floodfill_seed.getX(), floodfill_seed.getY(), Border, Color(0,0,0));
 	linedrawer.drawPolygon(edges,Color(0,0,0) );
 }
+
 void Shape::draw(){
 	linedrawer.drawPolygon(edges,Border);
 	linedrawer.floodFill4Seed(floodfill_seed.getX(), floodfill_seed.getY(), Border, Fill);

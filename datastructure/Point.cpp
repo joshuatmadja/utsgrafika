@@ -9,7 +9,7 @@ Point::Point() {
 
 Point::Point(int x, int y) {
 	setPoint(x/1.00,y/1.00);
-} 	
+}
 
 void Point::setPoint(int x, int y) {
 	this->x = x/1.00;
@@ -21,6 +21,14 @@ void Point::setPoint(double x, double y) {
 	this->y = y;
 }
 
+
+void Point::setX(double a){
+	x = a;
+}
+
+void Point::setY(double a){
+	y = a;
+}
 
 int Point::getX() {
 	return round(x);
@@ -64,4 +72,11 @@ void Point::rotatePoros(int theta, Point poros){
 	double degree = ((double)theta)* PI/180 ;
 	x = poros.getX() + ((oldX - poros.getX()) * cos(degree) - (poros.getY() - oldY) * sin(degree));
 	y = poros.getY() - ((oldX - poros.getX()) * sin(degree) + (poros.getY() - oldY) * cos(degree));
+}
+
+Point Point::scaleUp(Point center, double scale){
+	Point P_new;
+	P_new.setX(((getX() - center.getX()) * scale) + center.getX());
+	P_new.setY(((getY() - center.getY()) * scale) + center.getY());
+	return P_new;
 }

@@ -38,7 +38,6 @@ bool ccw(Point P, Point Q, Point R){
 
 bool is_inside_polygon(Point P, vector<Point> edges){
 	//Code from Competitive programming 3 page 287
-
 	double sum = 0;
 	edges.push_back(edges[0]);
 	for(int i=0; i < (int) edges.size()-1; i++){
@@ -85,6 +84,7 @@ Point getFloodFillSeed( vector<Point>& edge){
 
 Shape::Shape(){
 	edges.clear();
+	edges_modified.clear();
 	Border = Color(0,0,0);
 	Fill = Color(0,0,0);
 }
@@ -92,6 +92,7 @@ Shape::Shape(){
 Shape::Shape(vector<Point>& starting_edge, Color C ){
 	edges.clear();
 	edges = starting_edge;
+	edges_modified = starting_edge;
 	Border = C;
 	Fill = Color(0,0,0);
 
@@ -101,6 +102,7 @@ Shape::Shape(vector<Point>& starting_edge, Color C ){
 
 Shape::~Shape(){
 	edges.clear();
+	edges_modified.clear();
 }
 
 Shape::Shape(const Shape &obj){
@@ -136,10 +138,9 @@ void Shape::Rotate(int theta){
 	erase();
 	center = calculate_center(edges);
 	for(int i=0; i<edges.size(); i++){
-		edges[i].moveBy(-center.getX(), -center.getY());
-		edges[i].rotate(theta);
-		edges[i].moveBy(center.getX(), center.getY());
-
+		edges_modified[i].moveBy(-center.getX(), -center.getY());
+		edges_modified[i].moveBy(center.getX(), center.getY());
+		edges_modified[i].rotate(theta);
 	}
 	floodfill_seed.moveBy(-center.getX(), -center.getY());
 	floodfill_seed.rotate(theta);
@@ -149,13 +150,13 @@ void Shape::Rotate(int theta){
 
 
 void Shape::erase(){
-	linedrawer.drawPolygon(edges,Border );
+	linedrawer.drawPolygon(edges_modified,Border );
 	linedrawer.floodFill4Seed(floodfill_seed.getX(), floodfill_seed.getY(), Border, Color(0,0,0));
-	linedrawer.drawPolygon(edges,Color(0,0,0) );
+	linedrawer.drawPolygon(edges_modified,Color(0,0,0) );
 }
 
 void Shape::draw(){
-	linedrawer.drawPolygon(edges,Border);
+	linedrawer.drawPolygon(edges_modified,Border);
 	linedrawer.floodFill4Seed(floodfill_seed.getX(), floodfill_seed.getY(), Border, Fill);
 }
 
@@ -203,8 +204,20 @@ void Shape::PlaneParabola(int theta, Point poros){
 
 void Shape::scale(double x){
 	for(int i=0; i<edges.size();i++){
-		edges[i].x *=x;
-		edges[i].y *=x;
+		edges_modified[i].x = edges[i].x * x;
+		edges_modified[i].y = edges[i].y * x;
 	}
 	draw();
+}
+
+void Shape::zoom(Point center, double scale){
+    int p_size = edges_modified.size();
+		for(int j = 0;j < p_size; ++j){
+			edges_modified[j] = edges[j].scaleUp(center,scale);
+		}
+    draw();
+}
+
+vector<Point> Shape::getEdges(){
+	return edges;
 }

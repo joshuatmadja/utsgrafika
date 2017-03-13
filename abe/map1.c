@@ -20,60 +20,14 @@ typedef struct Colors {
     int b;
 } Color;
 
-typedef struct lines {
-	Point* p1;
-	Point* p2;
-} Line;
-
-typedef struct clipWindows {
-	double l; //batas kiri window, sb. x
-	double r; //batas kanan window, sb.x
-	double t; //batas atas window, sb. y
-	double b; //batas bawah window. sb. y
-} Clipwindow;
-
-typedef struct pointCodes {
-	//buat posisi garis thd clipwindow, didalem diluar apa terpotong clipwindow
-	//nilai 1 dan 0
-	int l;
-	int r;
-	int t;
-	int b;
-} Pointcode;
-
 typedef struct Buildings {
 
     int neff;
     Point * P;
 } Building;
 
-typedef struct Trees {
-	int neff;
-	Point *P;
-} Tree;
-
-typedef struct Streets {
-	int neff;
-	Point *P;
-} Street;
-
 struct fb_var_screeninfo vinfo;
 struct fb_fix_screeninfo finfo;
-
-struct readFallDownParams {
-	Point* p;
-	Point firepoint;
-	Color c;
-};
-
-struct readFallSpinParams {
-	Point* p;
-	Point firepoint;
-	Color c;
-	Point pivot;
-};
-
-
 
 Color bg; // warna background
 char* fbp; // memory map ke fb0
@@ -83,21 +37,22 @@ Point * window_center;
 int bytePerPixel;
 int overPixel = 10;
 Point * window;
-Color c2;
+Color c_map;
 int nBuilding = 0;
 int nBuilding2 = 0;
-int nTree = 0;
-int nStreet = 0;
+int nBuilding3 = 0;
+long location2;
+
 Building * building;
-Building * tree;
-Building * street;
+Building * goal;
+Building * goal_temp;
 
 int i;
 int window_width = 790;
 int window_height = 590;
 
-int zoom_width = 100;
-int zoom_height = 100;
+int zoom_width = 15;
+int zoom_height = 15;
 
 void setPoint(Point* p, int x, int y) {
     p -> x = x;
@@ -165,22 +120,61 @@ void loadBuildings4() {
         } while (c!='\n');
         j = 0;
         if (!feof(file)) {
-            // printf("building %d\n", i);
             while (c = getc(file) != '#'){
                 fscanf (file, "%d", &valx);
                 fscanf (file, "%d", &valy);
-                //printf("%d %d\n",valx , valy);
                 setPoint(&building[i].P[j], valx, valy);
-                //printf("%d %d\n", building[i].P[j].x, building[i].P[j].y);
-                // building.push_back(pTemp);
                 j++;
             }
             building[i].neff = j;
-            // printf("%d\n", building[i].neff);
+
             i++;
         }
     };
     nBuilding2 = i;
+    fclose(file);
+}
+
+void loadBuildings5() {
+    //printf("TES");
+    char c;
+    int valx, valy;
+    Point pTemp;
+    FILE *file;
+    file = fopen("buildings2.txt", "r");
+    int i, j;
+    goal = malloc(200 * sizeof(Building));
+    goal_temp = malloc(200 * sizeof(Building));
+    for (i = 0; i < 200; i++) {
+        goal[i].P = (Point *) malloc(50 * sizeof(Point));
+        goal_temp[i].P = (Point *) malloc(50 * sizeof(Point));
+    }
+    int itgoal;
+    int itpoint;
+    i = 0;
+
+    while (!feof(file)) {
+        do {
+                c = getc(file);
+                if (feof(file)) break;
+        } while (c!='#');
+        do {
+                c = getc(file);
+                if (feof(file)) break;
+        } while (c!='\n');
+        j = 0;
+        if (!feof(file)) {
+            while (c = getc(file) != '#'){
+                fscanf (file, "%d", &valx);
+                fscanf (file, "%d", &valy);
+                setPoint(&goal[i].P[j], valx, valy);
+                j++;
+            }
+            goal[i].neff = j;
+            i++;
+        }
+    };
+    nBuilding3 = i;
     fclose(file);
 }
 
@@ -229,7 +223,7 @@ void drawZoomLineX(Point* p1, Point* p2, Color* c, int positif) {
 
 			}
 			else{
-				Color * temp = &c2;
+				Color * temp = &c_map;
 				location = (i + vinfo.xoffset) * bytePerPixel + (j + vinfo.yoffset) * finfo.line_length;
 				changeARGB(location, temp);
 			}
@@ -259,7 +253,7 @@ void drawZoomLineY(Point* p1, Point* p2, Color* c, int positif) {
 
 			}
 			else{
-				Color * temp = &c2;
+				Color * temp = &c_map;
 				location = (i + vinfo.xoffset) * bytePerPixel + (j + vinfo.yoffset) * finfo.line_length;
 				changeARGB(location, temp);
 			}
@@ -404,50 +398,23 @@ Point * initWindow(Point * window_center){
 }
 
 Point * initZoomWindow(Point * window_center){
-	Point * zoom = (Point*) malloc(5 * sizeof(Point));
+	Point * zoom = (Point*) malloc(4 * sizeof(Point));
 	int x = window_center->x;
 	int y = window_center->y;
-	setPoint(&zoom[0], x-zoom_width/2, y-zoom_height/2);
-	setPoint(&zoom[1], x+zoom_width/2, y-zoom_height/2);
-	setPoint(&zoom[2], x+zoom_width/2, y+zoom_height/2);
-	setPoint(&zoom[3], x-zoom_width/2, y+zoom_height/2);
-	setPoint(&zoom[4], x-zoom_width/2, y-zoom_height/2);
+	setPoint(&zoom[0], x, y-zoom_height/2);
+	setPoint(&zoom[1], x+zoom_width/2, y+zoom_height/2);
+	setPoint(&zoom[2], x-zoom_width/2, y+zoom_height/2);
+	setPoint(&zoom[3], x, y-zoom_height/2);
 	return zoom;
-}
-
-void drawBuilding(int zoom, Point* p, int numPoints, Color c) {
-	int k, i;
-	for (k = 0; k<zoom; k++) {
-		for (i = 0; i < numPoints-1; i++) {
-			drawLine(&p[i], &p[i+1], &c);
-			//p[i].x++;
-			//p[i].y++;
-		}
-		drawLine(&p[i], &p[0], &c);
-		//p[i].x++;
-		//p[i].y++;
-	}
 }
 
 void drawZoomBuilding(int zoom, Point* p, int numPoints, Color c) {
 	int k, i;
 		for (i = 0; i < numPoints-1; i++) {
 			drawZoomLine(&p[i], &p[i+1], &c);
-			//p[i].x++;
-			//p[i].y++;
 		}
 		drawZoomLine(&p[i], &p[0], &c);
-		//p[i].x++;
-		//p[i].y++;
 }
-
-void drawMap(Building* building, Color c) {
-	int i, j;
-	for(i = 0; i < nBuilding; i++) {
-		drawBuilding(1, building[i].P, building[i].neff, c);
-	}
-}
-
 
 void drawZoomMap(Building* building, Color c) {
 	int i, j;
@@ -455,6 +422,7 @@ void drawZoomMap(Building* building, Color c) {
 		drawZoomBuilding(1, building[i].P, building[i].neff, c);
 	}
 }
+
 void zoom(float zoom, Point * zoomPoint, Building * building){
 	Point * zoomtemp;
 	zoomtemp = (Point*) malloc(1 * sizeof(Point));
@@ -477,8 +445,6 @@ void zoom(float zoom, Point * zoomPoint, Building * building){
 		for (b = 0; b < building[a].neff; b++) {
 			temp[a].P[b].x = (building[a].P[b].x * zoom) + deltax;
 			temp[a].P[b].y = (building[a].P[b].y * zoom) + deltay;
-			//printf("%d %d\n",building[a].P[b].x,building[a].P[b].y);
-			//printf("%d %d\n",temp[a].P[b].x,temp[a].P[b].y);
 		}
 	}
 	
@@ -488,111 +454,176 @@ void zoom(float zoom, Point * zoomPoint, Building * building){
 	free(temp);
 }
 
+void solidFill(Point* firepoint, Color c){
+	Point newfp;
+    if(firepoint->x>1 && firepoint->x<vinfo.xres-1 && firepoint->y>1 && firepoint->y<vinfo.yres-1){
+        newfp.x = firepoint->x+1;
+        newfp.y = firepoint->y;
+        long location = (newfp.x+vinfo.xoffset) * (vinfo.bits_per_pixel/8) + (newfp.y+vinfo.yoffset) * finfo.line_length;
+        if(*(fbp + location)!=c.r || *(fbp + location +1)!=c.g || *(fbp + location +2) !=c.b){
+            *(fbp + location) =c.r;
+            *(fbp + location +1) = c.g;
+            *(fbp + location +2) = c.b;
+            *(fbp + location + 3) = c.a;
+            solidFill(&newfp, c);
+        }
+        
+        newfp.x = firepoint->x-1;
+        newfp.y = firepoint->y;
+        location = (newfp.x+vinfo.xoffset) * (vinfo.bits_per_pixel/8) + (newfp.y+vinfo.yoffset) * finfo.line_length;
+        if(*(fbp + location)!=c.r || *(fbp + location +1)!=c.g || *(fbp + location +2) !=c.b){
+            *(fbp + location) =c.r;
+            *(fbp + location +1) = c.g;
+            *(fbp + location +2) = c.b;
+            *(fbp + location + 3) = c.a;
+            solidFill(&newfp, c);
+        }
+        
+        newfp.x = firepoint->x;
+        newfp.y = firepoint->y+1;
+        location = (newfp.x+vinfo.xoffset) * (vinfo.bits_per_pixel/8) + (newfp.y+vinfo.yoffset) * finfo.line_length;
+        if(*(fbp + location)!=c.r || *(fbp + location +1)!=c.g || *(fbp + location +2) !=c.b){
+            *(fbp + location) =c.r;
+            *(fbp + location +1) = c.g;
+            *(fbp + location +2) = c.b;
+            *(fbp + location + 3) = c.a;
+            solidFill(&newfp, c);
+        }
+        
+        newfp.x = firepoint->x;
+        newfp.y = firepoint->y-1;
+        location = (newfp.x+vinfo.xoffset) * (vinfo.bits_per_pixel/8) + (newfp.y+vinfo.yoffset) * finfo.line_length;
+        if(*(fbp + location)!=c.r || *(fbp + location +1)!=c.g || *(fbp + location +2) !=c.b){
+            *(fbp + location) =c.r;
+            *(fbp + location +1) = c.g;
+            *(fbp + location +2) = c.b;
+            *(fbp + location + 3) = c.a;
+            solidFill(&newfp, c);
+        }
+    }
+}
+
+//maaf ya parameter nya banyak males pisah
+void initSolidFill(Point * firepoint, Point * polygon, int size_of_polygonArr, float zoom, Point * zoomPoint, Color cFill){
+	int isInsideView = 1;
+	int j;
+	for(j = 0; j < size_of_polygonArr; j++) {
+		if(polygon[j].x<0 || polygon[j].x>599 || polygon[j].y<0 || polygon[j].y>599){
+			isInsideView = 0;
+			break;
+		}
+	}
+	
+	if(isInsideView==1){
+		Point * new_firepoint = (Point*) malloc(1 * sizeof(Point));
+		setPoint(&new_firepoint[0], firepoint[0].x, firepoint[0].y);
+		
+		Point * zoomtemp;
+		zoomtemp = (Point*) malloc(1 * sizeof(Point));
+		zoomtemp[0].x = zoomPoint->x * zoom;
+		zoomtemp[0].y = zoomPoint->y * zoom;
+		int deltax = zoomtemp[0].x - window_center->x;
+		deltax=deltax*-1;
+		int deltay = zoomtemp[0].y - window_center->y;
+		deltay=deltay*-1;
+		
+		new_firepoint[0].x = (new_firepoint[0].x * zoom) + deltax;
+		new_firepoint[0].y = (new_firepoint[0].y * zoom) + deltay;
+		
+		//paksa ke border
+		if(new_firepoint[0].x<0){
+			new_firepoint[0].x=2;
+		}
+		else if(new_firepoint[0].x>vinfo.xres-1){
+			new_firepoint[0].x=vinfo.xres-2;
+		}
+		
+		if(new_firepoint[0].y>vinfo.yres-1){
+			new_firepoint[0].y=vinfo.xres-2;
+		}
+		else if(new_firepoint[0].y<0){
+			new_firepoint[0].y=2;
+		}
+		//printf("%d %d\n",new_firepoint[0].x,new_firepoint[0].y);
+		solidFill(new_firepoint, cFill);
+	}
+	else{
+		
+	}
+}
 
 int main() {
     setColor(&bg, 0, 0, 0);
     connectBuffer();
     clearScreen(&bg);
-    Color c, cDel;
-    Color cT;
-    Color cS;
+    Color c, cDel, c_goal;
     setColor(&c, 255, 0, 0);
-    setColor(&c2, 0, 255, 255);
-    setColor(&cDel, 255, 255, 255);
-    setColor(&cT, 0, 255, 0);
-    setColor(&cS, 0, 0, 255);
+    setColor(&c_map, 0, 255, 255);
+    setColor(&cDel, 255, 255, 0);
+    setColor(&c_goal, 255, 0, 255);
 
+	//inisialisasi view's border
     window_center = (Point*) malloc(1 * sizeof(Point));
-	//setPoint(&window_center[0], 650, 200);
 	setPoint(&window_center[0], 400, 300);
-	Point * zoomPoint = (Point*) malloc(1 * sizeof(Point));
-	Point * zoom2 = (Point*) malloc(5 * sizeof(Point));
-	setPoint(&zoomPoint[0], 300, 300);
 	window = initWindow(window_center);
-	zoom2 = initZoomWindow(zoomPoint);
-    clearScreen(&bg);
+	
+	//inisialisasi cursor's border
+	Point * cursor_center = (Point*) malloc(1 * sizeof(Point));
+	Point * cursor = (Point*) malloc(5 * sizeof(Point));
+	setPoint(&cursor_center[0], 400, 300);
+	cursor = initZoomWindow(cursor_center);
+	
+	Point * goals_center = (Point*) malloc(1 * sizeof(Point));
+	setPoint(&goals_center[0], 309, 200);
+	
     int i,j;
     char ch;
+    //load dari file
     loadBuildings4();
-    //loadStreet();
-    //loadTree();
-    float zoom_val = 1;
+    loadBuildings5();
+    float zoom_val = 3;
+    int finish = 0;
     char stroke;
-    int alreadyPaintBuilding = 1;
-    int alreadyPaintTree = 1;
-    int alreadyPaintStreet = 1;
     while(1){
 		clearScreen(&bg);
 		//draw map
 		nBuilding = nBuilding2;
-		if (alreadyPaintBuilding == 1) {
-			//drawMap(building, c);
-			zoom(zoom_val,zoomPoint,building);
+		setColor(&c_map, 0, 255, 255);
+		zoom(zoom_val,cursor_center,building);
+		nBuilding = nBuilding3;
+		setColor(&c_map, 255, 0, 255);
+		zoom(zoom_val,cursor_center,goal);
 		
-		}
-		/*nBuilding = nTree;
-		if (alreadyPaintTree == 1) {
-			drawMap(tree, cT);
-			zoom(zoom_val,zoomPoint,tree);
-		
-		}
-		nBuilding = nStreet;
-		if (alreadyPaintStreet == 1) {
-			drawMap(street, cS);
-			zoom(zoom_val,zoomPoint,street);
-	
-		}*/
-		
+		//draw view's border
 		for(j = 0; j < 4; j++) {
 			drawLine(&window[j], &window[j + 1], &c);
 		}
 		
-		/*for(j = 0; j < 4; j++) {
-			drawLine(&zoom2[j], &zoom2[j + 1], &cDel);
-		}*/
-		
+		//draw cursor's border
+		for(j = 0; j < 3; j++) {
+			drawLine(&cursor[j], &cursor[j + 1], &cDel);
+		}
+		initSolidFill(cursor_center,cursor,4,zoom_val,cursor_center,cDel);
 		
 		stroke = getch();
 		switch (stroke) {
-			case 'd': zoomPoint->x+=20; break;
-			case 's': zoomPoint->y+=20; break;
-			case 'a': zoomPoint->x-=20; break;
-			case 'w': zoomPoint->y-=20; break;
+			case 'd': cursor_center->x+=5; break;
+			case 's': cursor_center->y+=5; break;
+			case 'a': cursor_center->x-=5; break;
+			case 'w': cursor_center->y-=5; break;
 			case 'z':
 				zoom_val*=2;
-				zoom_height=zoom_height/2;
-				zoom_width=zoom_width/2;
 				break;
 			case 'x':
 				zoom_val=zoom_val/2;
-				zoom_height*=2;
-				zoom_width*=2;
 				break;
-			case 't':
-				if(alreadyPaintTree == 0) {
-					alreadyPaintTree = 1;
-				} else {
-					alreadyPaintTree = 0;
-				}
-				break;
-			case 'j' :
-				if(alreadyPaintStreet == 0) {
-					alreadyPaintStreet = 1;
-				} else {
-					alreadyPaintStreet = 0;
-				}
-				break;
-			case 'b' :
-				if(alreadyPaintBuilding == 0) {
-					alreadyPaintBuilding = 1;
-				} else {
-					alreadyPaintBuilding = 0;
-				}
-				break;
-			
 					
 		}
-		zoom2 = initZoomWindow(zoomPoint);
+		if(finish==1){
+			clearScreen(&bg);
+			printf("kamu menang\n");
+			break;
+		}
 	}
     munmap(fbp, screensize);
     close(fbfd);

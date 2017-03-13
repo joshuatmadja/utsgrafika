@@ -37,15 +37,21 @@ Point * window_center;
 int bytePerPixel;
 int overPixel = 10;
 Point * window;
-Color c_map;
+Color c_map, c_goal;
 int nBuilding = 0;
 int nBuilding2 = 0;
 int nBuilding3 = 0;
 long location2;
+Point * cursor_center;
+int global_xmin;
+int global_xmax;
+int global_ymin;
+int global_ymax;
 
 Building * building;
 Building * goal;
 Building * goal_temp;
+Building * temp1;
 
 int i;
 int window_width = 790;
@@ -269,6 +275,28 @@ void drawZoomLineY(Point* p1, Point* p2, Color* c, int positif) {
 
 
 void drawZoomLine(Point* p1, Point* p2, Color* c) {
+	if(c_map.r==-1 && c_map.g==0 && c_map.b==-1){
+		if(p1->x==p2->x){
+			if(p1->y>p2->y){
+				global_ymax=p1->y;
+				global_ymin=p2->y;
+			}
+			else{
+				global_ymax=p2->y;
+				global_ymin=p1->y;
+			}
+		}
+		else{
+			if(p1->x>p2->x){
+				global_xmax=p1->x;
+				global_xmin=p2->x;
+			}
+			else{
+				global_xmax=p2->x;
+				global_xmin=p1->x;
+			}
+		}
+	}
     int dx = p2 -> x - p1 -> x;
     int dy = p2 -> y - p1 -> y;
     int octant = getOctant(dx, dy);    
@@ -508,7 +536,7 @@ void initSolidFill(Point * firepoint, Point * polygon, int size_of_polygonArr, f
 	int isInsideView = 1;
 	int j;
 	for(j = 0; j < size_of_polygonArr; j++) {
-		if(polygon[j].x<0 || polygon[j].x>599 || polygon[j].y<0 || polygon[j].y>599){
+		if(polygon[j].x<0 || polygon[j].x>vinfo.xres-2 || polygon[j].y<0 || polygon[j].y>vinfo.yres-2){
 			isInsideView = 0;
 			break;
 		}
@@ -548,15 +576,23 @@ void initSolidFill(Point * firepoint, Point * polygon, int size_of_polygonArr, f
 		solidFill(new_firepoint, cFill);
 	}
 	else{
-		
+		//exit(0);
 	}
+}
+
+int isFinished(){
+	if(cursor_center[0].x<global_xmax && cursor_center[0].x<global_xmin && cursor_center[0].y<global_ymax && cursor_center[0].y<global_ymin){
+		return 1;
+	}
+	return 0;
 }
 
 int main() {
     setColor(&bg, 0, 0, 0);
     connectBuffer();
+    temp1 = malloc(nBuilding * sizeof(Point));
     clearScreen(&bg);
-    Color c, cDel, c_goal;
+    Color c, cDel;
     setColor(&c, 255, 0, 0);
     setColor(&c_map, 0, 255, 255);
     setColor(&cDel, 255, 255, 0);
@@ -568,7 +604,7 @@ int main() {
 	window = initWindow(window_center);
 	
 	//inisialisasi cursor's border
-	Point * cursor_center = (Point*) malloc(1 * sizeof(Point));
+	cursor_center = (Point*) malloc(1 * sizeof(Point));
 	Point * cursor = (Point*) malloc(5 * sizeof(Point));
 	setPoint(&cursor_center[0], 400, 300);
 	cursor = initZoomWindow(cursor_center);
@@ -581,7 +617,7 @@ int main() {
     //load dari file
     loadBuildings4();
     loadBuildings5();
-    float zoom_val = 3;
+    float zoom_val = 1;
     int finish = 0;
     char stroke;
     while(1){
@@ -612,7 +648,12 @@ int main() {
 			case 'a': cursor_center->x-=5; break;
 			case 'w': cursor_center->y-=5; break;
 			case 'z':
-				zoom_val*=2;
+				if(isFinished()==1){
+					finish = 1;
+				}
+				else{
+					zoom_val*=2;
+				}
 				break;
 			case 'x':
 				zoom_val=zoom_val/2;

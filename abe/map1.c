@@ -10,9 +10,13 @@
 #include "event.c"
 
 typedef struct Points {
-    int x;
-    int y;
+    double x;
+    double y;
 } Point;
+typedef struct {
+    double x;
+    double y;
+} fPoint;
 typedef struct Colors {
     int a;
     int r;
@@ -37,6 +41,9 @@ Point * window_center;
 int bytePerPixel;
 int overPixel = 10;
 Point * window;
+Point * finish;
+Point * rotateObj;
+fPoint *tes;
 Color c_map, c_goal;
 int nBuilding = 0;
 int nBuilding2 = 0;
@@ -61,6 +68,11 @@ int zoom_width = 15;
 int zoom_height = 15;
 
 void setPoint(Point* p, int x, int y) {
+    p -> x = x;
+    p -> y = y;
+}
+
+void setfPoint(fPoint* p, double x, double y) {
     p -> x = x;
     p -> y = y;
 }
@@ -272,7 +284,6 @@ void drawZoomLineY(Point* p1, Point* p2, Color* c, int positif) {
         d += dx;
     }
 }
-
 
 void drawZoomLine(Point* p1, Point* p2, Color* c) {
 	if(c_map.r==-1 && c_map.g==0 && c_map.b==-1){
@@ -587,17 +598,199 @@ int isFinished(){
 	return 0;
 }
 
+void drawGameOver(){
+	int l;
+	setPoint(&finish[0], 150, 100);
+	setPoint(&finish[1], 100, 100);
+	setPoint(&finish[2], 100, 150);
+	setPoint(&finish[3], 135, 150);
+	setPoint(&finish[4], 135, 175);
+	setPoint(&finish[5], 100, 175);
+	setPoint(&finish[6], 100, 200);
+	setPoint(&finish[7], 150, 200);
+	setPoint(&finish[8], 150, 100);
+	for(l = 0; l<8; l++){
+		drawLine(&finish[l],&finish[l+1],&c_map);
+	}
+	
+	setPoint(&finish[0], 140, 110);
+	setPoint(&finish[1], 110, 110);
+	setPoint(&finish[2], 110, 135);
+	setPoint(&finish[3], 140, 135);
+	setPoint(&finish[4], 140, 110);
+	for(l = 0; l<4; l++){
+		drawLine(&finish[l],&finish[l+1],&c_map);
+	}
+	setPoint(&finish[0], 120, 180);
+	solidFill(&finish[0],c_map);
+	
+	//bikin A
+	setPoint(&finish[0], 175, 100);
+	setPoint(&finish[1], 175, 200);
+	setPoint(&finish[2], 190, 200);
+	setPoint(&finish[3], 190, 165);
+	setPoint(&finish[4], 235, 165);
+	setPoint(&finish[5], 235, 200);
+	setPoint(&finish[6], 250, 200);
+	setPoint(&finish[7], 250, 100);
+	setPoint(&finish[8], 175, 100);
+	for(l = 0; l<8; l++){
+		drawLine(&finish[l],&finish[l+1],&c_map);
+	}
+	setPoint(&finish[0], 190, 110);
+	setPoint(&finish[1], 235, 110);
+	setPoint(&finish[2], 235, 140);
+	setPoint(&finish[3], 190, 140);
+	setPoint(&finish[4], 190, 110);
+	for(l = 0; l<4; l++){
+		drawLine(&finish[l],&finish[l+1],&c_map);
+	}
+	setPoint(&finish[0], 185, 180);
+	solidFill(&finish[0],c_map);
+	
+	//bikin M
+	setPoint(&finish[0], 275, 100);
+	setPoint(&finish[1], 300, 100);
+	setPoint(&finish[2], 325, 150);
+	setPoint(&finish[3], 350, 100);
+	setPoint(&finish[4], 375, 100);
+	setPoint(&finish[5], 375, 200);
+	setPoint(&finish[6], 350, 200);
+	setPoint(&finish[7], 350, 130);
+	setPoint(&finish[8], 325, 180);
+	setPoint(&finish[9], 300, 130);
+	setPoint(&finish[10], 300, 200);
+	setPoint(&finish[11], 275, 200);
+	setPoint(&finish[12], 275, 100);
+	for(l = 0; l<12; l++){
+		drawLine(&finish[l],&finish[l+1],&c_map);
+	}
+	setPoint(&finish[0], 280, 120);
+	solidFill(&finish[0],c_map);
+	
+	//bikin E
+	setPoint(&finish[0], 400, 100);
+	setPoint(&finish[1], 400, 200);
+	setPoint(&finish[2], 450, 200);
+	setPoint(&finish[3], 450, 180);
+	setPoint(&finish[4], 420, 180);
+	setPoint(&finish[5], 420, 160);
+	setPoint(&finish[6], 450, 160);
+	setPoint(&finish[7], 450, 140);
+	setPoint(&finish[8], 420, 140);
+	setPoint(&finish[9], 420, 120);
+	setPoint(&finish[10], 450, 120);
+	setPoint(&finish[11], 450, 100);
+	setPoint(&finish[12], 400, 100);
+	for(l = 0; l<12; l++){
+		drawLine(&finish[l],&finish[l+1],&c_map);
+	}
+	setPoint(&finish[0],  420, 120);
+	solidFill(&finish[0],c_map);
+	
+	//bikin O
+	setPoint(&finish[0], 250, 250);
+	setPoint(&finish[1], 320, 250);
+	setPoint(&finish[2], 320, 350);
+	setPoint(&finish[3], 250, 350);
+	setPoint(&finish[4], 250, 250);
+	for(l = 0; l<4; l++){
+		drawLine(&finish[l],&finish[l+1],&c_map);
+	}
+	setPoint(&finish[0], 270, 270);
+	setPoint(&finish[1], 300, 270);
+	setPoint(&finish[2], 300, 330);
+	setPoint(&finish[3], 270, 330);
+	setPoint(&finish[4], 270, 270);
+	for(l = 0; l<4; l++){
+		drawLine(&finish[l],&finish[l+1],&c_map);
+	}	
+	setPoint(&finish[0],  260, 260);
+	solidFill(&finish[0],c_map);
+	
+	
+	//bikin V
+	setPoint(&finish[0], 360, 250);
+	setPoint(&finish[1], 380, 250);
+	setPoint(&finish[2], 400, 330);
+	setPoint(&finish[3], 420, 250);
+	setPoint(&finish[4], 440, 250);
+	setPoint(&finish[5], 415, 350);
+	setPoint(&finish[6], 385, 350);
+	setPoint(&finish[7], 360, 250);
+	for(l = 0; l<7; l++){
+		drawLine(&finish[l],&finish[l+1],&c_map);
+	}
+	setPoint(&finish[0],  365, 251);
+	solidFill(&finish[0],c_map);
+	
+	
+	//bikin E lg
+	setPoint(&finish[0], 480, 250);
+	setPoint(&finish[1], 480, 350);
+	setPoint(&finish[2], 530, 350);
+	setPoint(&finish[3], 530, 330);
+	setPoint(&finish[4], 500, 330);
+	setPoint(&finish[5], 500, 310);
+	setPoint(&finish[6], 530, 310);
+	setPoint(&finish[7], 530, 290);
+	setPoint(&finish[8], 500, 290);
+	setPoint(&finish[9], 500, 270);
+	setPoint(&finish[10], 530, 270);
+	setPoint(&finish[11], 530, 250);
+	setPoint(&finish[12], 480, 250);
+	for(l = 0; l<12; l++){
+		drawLine(&finish[l],&finish[l+1],&c_map);
+	}
+	setPoint(&finish[0],  490, 255);
+	solidFill(&finish[0],c_map);
+	
+	//bikin R
+	setPoint(&finish[0], 575, 250);
+	setPoint(&finish[1], 575, 350);
+	setPoint(&finish[2], 590, 350);
+	setPoint(&finish[3], 590, 315);
+	setPoint(&finish[4], 635, 350);
+	setPoint(&finish[5], 650, 350);
+	setPoint(&finish[6], 630, 315);
+	setPoint(&finish[7], 650, 315);
+	setPoint(&finish[8], 650, 250);
+	setPoint(&finish[9], 575, 250);
+	for(l = 0; l<9; l++){
+		drawLine(&finish[l],&finish[l+1],&c_map);
+	}
+	setPoint(&finish[0], 595, 270);
+	setPoint(&finish[1], 595, 300);
+	setPoint(&finish[2], 630, 300);
+	setPoint(&finish[3], 630, 270);
+	setPoint(&finish[4], 595, 270);
+	for(l = 0; l<4; l++){
+		drawLine(&finish[l],&finish[l+1],&c_map);
+	}
+	setPoint(&finish[0], 580, 255);
+	solidFill(&finish[0],c_map);
+}
+
+void rotate(Point poros, double angle, Point *arrPoint, int nPoint){
+	for (int i = 0; i<nPoint; i++){
+		double ytemp = rotateObj[i].y;
+		double xtemp = rotateObj[i].x;
+		rotateObj[i].x = poros.x + (xtemp-poros.x) * cos(3.14159265/180*angle) - (poros.y - ytemp) * sin(3.14159265/180*angle);
+		rotateObj[i].y = poros.y - ((xtemp-poros.x) * sin(3.14159265/180*angle) + (poros.y - ytemp) * cos(3.14159265/180*angle));
+	}
+}
+
 int main() {
     setColor(&bg, 0, 0, 0);
     connectBuffer();
-    temp1 = malloc(nBuilding * sizeof(Point));
     clearScreen(&bg);
     Color c, cDel;
     setColor(&c, 255, 0, 0);
     setColor(&c_map, 0, 255, 255);
     setColor(&cDel, 255, 255, 0);
     setColor(&c_goal, 255, 0, 255);
-
+    finish = (Point*) malloc(16 * sizeof(Point));
+    tes = (fPoint*) malloc(16 * sizeof(fPoint));
 	//inisialisasi view's border
     window_center = (Point*) malloc(1 * sizeof(Point));
 	setPoint(&window_center[0], 400, 300);
@@ -620,6 +813,7 @@ int main() {
     float zoom_val = 1;
     int finish = 0;
     char stroke;
+    //gameplay
     while(1){
 		clearScreen(&bg);
 		//draw map
@@ -663,10 +857,26 @@ int main() {
 					
 		}
 		if(finish==1){
-			clearScreen(&bg);
-			printf("kamu menang\n");
 			break;
 		}
+	}
+	
+	clearScreen(&bg);
+	rotateObj = (Point*) malloc(5 * sizeof(Point));
+	setPoint(&rotateObj[0], 100, 400);
+	setPoint(&rotateObj[1], 300, 400);
+	setPoint(&rotateObj[2], 300, 500);
+	setPoint(&rotateObj[3], 100, 400);
+	Point * poros = (Point*) malloc(1 * sizeof(Point));
+	setPoint(&poros[0], 200, 450);
+	while(1){	
+		drawGameOver();
+		for(j = 0; j <3 ; j++) {
+			drawLine(&rotateObj[j], &rotateObj[j + 1], &cDel);
+		}
+		rotate(poros[0],8,rotateObj,4);
+		sleep(1);
+		clearScreen(&bg);
 	}
     munmap(fbp, screensize);
     close(fbfd);

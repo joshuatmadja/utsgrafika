@@ -105,43 +105,14 @@ void zoom_world(Point center, double scale){
 
 /* Print inside frame (Clipping) Masih Salah!!!!!*/
 void Print_Inside_Frame(){
-  vector<Point> checked;
-  for (int i = 0; i < N; i++){
-    world_shape[i]->erase();
-    for (int j = 0; j < world_shape[i]->getEdgesModified().size(); j++){
-      /* Check wheter points of shape is in the frame or not */
-      if ((world_shape[i]->getEdgesModified()[j].getX() > 100) && (world_shape[i]->getEdgesModified()[j].getX() < 500)
-        && (world_shape[i]->getEdgesModified()[j].getY() > 100) && (world_shape[i]->getEdgesModified()[j].getY() < 500)){
-          checked.push_back(world_shape[i]->getEdgesModified()[j]);
-      }
-      else if (world_shape[i]->getEdgesModified()[j].getX() < 100){
-          Point temp(100, world_shape[i]->getEdgesModified()[j].getY());
-          checked.push_back(temp);
-      }
-      else if (world_shape[i]->getEdgesModified()[j].getX() > 500){
-          Point temp(500, world_shape[i]->getEdgesModified()[j].getY());
-          checked.push_back(temp);
-      }
-      else if (world_shape[i]->getEdgesModified()[j].getY() < 100){
-          Point temp(world_shape[i]->getEdgesModified()[j].getY(), 100);
-          checked.push_back(temp);
-      }
-      else if (world_shape[i]->getEdgesModified()[j].getY() > 500){
-          Point temp(world_shape[i]->getEdgesModified()[j].getY(), 500);
-          checked.push_back(temp);
-      }
-    }
-
-    /* Draw line checked */
-    linedrawer.drawPolygon(checked, world_shape[i]->getBorder());
-  	linedrawer.floodFill4Seed(world_shape[i]->getFloodFill_Seed().getX(), world_shape[i]->getFloodFill_Seed().getY(),
-      world_shape[i]->getBorder(), world_shape[i]->getFill());
-    checked.clear();
-  }
+	for (int i = 0; i < N; i++){
+   		world_shape[i]->draw();
+  	}
 }
 
 int main(){
   screen.ClearScreen();
+  linedrawer.setView(Point(100,100),Point(500,500));
   createFrame();
   Point center(250,250);
   BuildRandomShape();

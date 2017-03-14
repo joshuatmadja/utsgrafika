@@ -47,7 +47,6 @@ bool is_inside_polygon(Point P, vector<Point> edges){
 			sum-=angle(edges[i], P, edges[i+1]);
 	}
 	return fabs( fabs(sum) - 2 * PI ) < EPS;
-
 }
 
 

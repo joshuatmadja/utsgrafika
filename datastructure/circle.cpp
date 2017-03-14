@@ -45,3 +45,17 @@ void Circle::setFillColor(Color C){
 void Circle::setBorderColor(Color c){
 	Border = c;
 }
+
+double Circle::getRadius(){
+	return radius;
+}
+
+Point Circle::getCenter(){
+	return center;
+}
+
+void Circle::zoom(Point c, float s){
+	erase();
+	center.scaleUp(c,s);
+	radius *= s;
+}

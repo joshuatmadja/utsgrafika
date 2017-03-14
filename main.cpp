@@ -1,4 +1,5 @@
 #include "datastructure/shape.h"
+#include "datastructure/Circle.h"
 #include <iostream>
 #include <linux/fb.h>
 #include <sys/mman.h>
@@ -44,6 +45,9 @@ int N;
 Shape* frame;
 Shape* cursor;
 
+/* Objective */
+Circle* obj;
+
 void initTermios(int echo){
   tcgetattr(0, &old);
   news = old;
@@ -72,7 +76,7 @@ char getch(void){
 void BuildRandomShape(){
   /* Random sheet*/
   srand(time(NULL));
-  N = rand() % 10;
+  N = rand() % 10 + 1;
   int i, j;
   for (i = 0; i < N; i++){
     Color c(rand() % 255, rand() % 255, rand() % 255);
@@ -123,6 +127,28 @@ void BuildRandomShape(){
     }
 }
 
+void create_objective(){
+  srand(time(NULL));
+  Point center(rand() % 200 + 200, rand() % 200 + 200);
+  int rds = rand()%3+3;
+  obj = new Circle(center, rds, white);
+}
+
+bool checkWin(){
+  /* Titik atas kursor */
+  Point p1(center_world.getX(),center_world.getY()-5);
+  float b = abs(p1.getY()-obj->getCenter().getY());
+  float a = abs(p1.getX()-obj->getCenter().getX());
+  int rads = obj->getRadius();
+  int jarak = sqrt((a*a)+(b*b));
+  if (jarak <= rads){
+    return true;
+  }
+  else{
+    return false;
+  }
+}
+
 void make_center_point(){
   Point p1(center_world.getX(),center_world.getY()-5);
   Point p2(center_world.getX()-5,center_world.getY()+5);
@@ -136,7 +162,6 @@ void make_center_point(){
   cursor = new Shape(v, white);
   cursor->setFillColor(white);
   cursor->setFloodFillSeed(center_world);
-  cursor->draw();
 }
 
 void createFrame(){
@@ -154,12 +179,13 @@ void createFrame(){
   frame -> draw();
 }
 
-/* Belom Bener */
+/* Zoom all shape in world */
 void zoom_world(Point c, double s){
   for (int i = 0; i < N; i++){
     world_shape[i]->erase();
     world_shape[i]->zoom(c, s);
   }
+  obj->zoom(c,s);
 }
 
 /* Print inside frame (Clipping) Masih Salah!!!!!*/
@@ -169,22 +195,36 @@ void Print_Inside_Frame(){
 	for (int i = 0; i < N; i++){
    		world_shape[i]->draw();
   }
-  make_center_point();
+  obj->draw();
+  cursor->draw();
 }
 
 void move_world(int deltaX, int deltaY){
   for (int i = 0; i < N; i++){
     world_shape[i]->moveBy(deltaX,deltaY);
   }
+  obj->moveBy(deltaX, deltaY);
+}
+
+void initAll(){
+  create_objective();
+  make_center_point();
+  BuildRandomShape();
+  Print_Inside_Frame();
+  createFrame();
 }
 
 int main(){
+  bool win = false;
+  int life = 3;
   screen.ClearScreen();
   linedrawer.setView(Point(100,100),Point(500,500));
-  createFrame();
-  BuildRandomShape();
-  Print_Inside_Frame();
-  while(1){
+  initAll();
+  while(!win){
+    /* Lose */
+    if (life == 0){
+      break;
+    }
     int a = getch();
     //cout << a << endl;
     switch (a){
@@ -210,20 +250,26 @@ int main(){
         break;
       case 91 :
         //cout << "zoom out" << endl;
-        scale -= 0.2;
+        scale -= 0.3;
         usleep(1000);
         break;
       case 93 :
         //cout << "zoom in" << endl;
-        scale += 0.2;
+        scale += 0.3;
         usleep(1000);
         break;
+      case 32 :
+        if (checkWin()){
+          win = true;
+        }
+        else{
+          life--;
+        }
+        break;
     }
-    //cout << scale << endl;
     screen.ClearScreen();
     Print_Inside_Frame();
     createFrame();
-    //cout << screen.getWidth()<<endl<<screen.getHeight()<<endl;
   }
 	return 0;
 }

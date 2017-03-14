@@ -52,7 +52,7 @@ public:
 
 	void erase();
 	void draw();
-	void scale(double x);
+	void scale(double x, Point p);
 	void zoom(Point center, double scale);
 	Point floodfill_seed;
 	vector<Point> edges;

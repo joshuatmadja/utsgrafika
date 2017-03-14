@@ -31,6 +31,7 @@ void Circle::erase(){
 	linedrawer.drawCircle(radius,center,Color(0,0,0));
 	linedrawer.floodFill4Seed(center.getX(), center.getY(), Border, Color(0,0,0));
 }
+
 void Circle::draw(){
 	linedrawer.drawCircle(radius, center, Border);
 	linedrawer.floodFill4Seed(center.getX(), center.getY(), Border, Fill);

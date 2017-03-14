@@ -76,7 +76,7 @@ char getch(void){
 void BuildRandomShape(){
   /* Random sheet*/
   srand(time(NULL));
-  N = rand() % 10 + 1;
+  N =  rand() %  9 + 1;
   int i, j;
   for (i = 0; i < N; i++){
     Color c(rand() % 255, rand() % 255, rand() % 255);
@@ -120,10 +120,10 @@ void BuildRandomShape(){
         v.push_back(p5);
         v.push_back(p6);
       }
-      world_shape[i] = new Shape(v, c);
-      world_shape[i]->scale(rnd_scale);
-      //world_shape[i]->setFillColor(c);
-      //world_shape[i]->setFloodFillSeed(center);
+      world_shape[i] = new Shape(v, white);
+      world_shape[i]->setFillColor(c);
+      world_shape[i]->setFloodFillSeed(center);
+      world_shape[i]->scale(rnd_scale, center);
     }
 }
 

@@ -124,7 +124,6 @@ void Shape::moveBy(int deltaX, int deltaY){
 	}
 	center.moveBy(deltaX, deltaY);
 	floodfill_seed.moveBy(deltaX,deltaY);
-	draw();
 }
 
 
@@ -141,7 +140,6 @@ void Shape::Rotate(int theta){
 	floodfill_seed.moveBy(-center.getX(), -center.getY());
 	floodfill_seed.rotate(theta);
 	floodfill_seed.moveBy(center.getX(), center.getY());
-	draw();
 }
 
 
@@ -160,13 +158,11 @@ void Shape::draw(){
 void Shape::setFillColor(Color C){
 	erase();
 	Fill = C;
-	draw();
 }
 //set Border Color to color c
 void Shape::setBorderColor(Color c){
 	erase();
 	Border = c;
-	draw();
 }
 
 void Shape::setCenter(Point P){
@@ -185,7 +181,6 @@ void Shape::RotatePoros(int theta, Point poros){
 	//floodfill_seed.moveBy(-center.getX(), -center.getY());
 	floodfill_seed.rotatePoros(theta, poros);
 	//floodfill_seed.moveBy(center.getX(), center.getY());
-	draw();
 }
 
 //tes pesawat parabola
@@ -195,15 +190,12 @@ void Shape::PlaneParabola(int theta, Point poros){
 		edges[i].rotatePoros(theta, poros);
 	}
 	floodfill_seed.rotatePoros(theta, poros);
-	draw();
 }
 
-void Shape::scale(double x){
+void Shape::scale(double x, Point p){
 	for(int i=0; i<edges.size();i++){
-		edges[i].x = edges[i].x * x;
-		edges[i].y = edges[i].y * x;
+		edges[i] = edges[i].scaleUp(p,x);
 	}
-	draw();
 }
 
 void Shape::zoom(Point center, double scale){
@@ -211,8 +203,8 @@ void Shape::zoom(Point center, double scale){
 		for(int j = 0;j < p_size; ++j){
 			edges[j] = edges[j].scaleUp(center,scale);
 		}
-		floodfill_seed.scaleUp(center, scale);
-		this->center.scaleUp(center,scale);
+		floodfill_seed = floodfill_seed.scaleUp(center, scale);
+		this->center = this->center.scaleUp(center,scale);
 }
 
 vector<Point> Shape::getEdges(){

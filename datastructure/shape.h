@@ -25,6 +25,14 @@ public:
 	void setFillColor(Color C);
 	//set Border Color to color c
 	void setBorderColor(Color c);
+	void setFloodFillSeed(Point p);
+
+	/*Getter*/
+	Color getBorder();
+	Color getFill();
+	Point getFloodFill_Seed();
+	vector<Point> getEdgesModified();
+	vector<Point> getEdges();
 
 	//Move the object by delta
 	//deltaX : move the object in X axis by delta X
@@ -37,7 +45,6 @@ public:
 	void Rotate(int theta);
 	void RotatePoros(int theta,Point poros);
 	void PlaneParabola(int theta,Point poros);
-	vector<Point> getEdges();
 
 
 	//set the center of rotation to P
@@ -53,7 +60,6 @@ public:
 	Point center;
 	Color Border;
 	Color Fill;
-
 };
 
 #endif

@@ -30,15 +30,17 @@ public:
 
 	//rotate the object by theta degree clockwise
 	void Rotate(int theta);
+	double getRadius();
+	Point getCenter();
+	void zoom(Point c, float s);
 
 //private:
 	void erase();
 	void draw();
-	int radius;
+	double radius;
 	Point center;
 	Color Fill;
 	Color Border;
-
 };
 
 #endif

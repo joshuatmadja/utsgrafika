@@ -25,6 +25,7 @@ public:
 	void setFillColor(Color C);
 	//set Border Color to color c
 	void setBorderColor(Color c);
+	void setFloodFillSeed(Point p);
 
 	/*Getter*/
 	Color getBorder();

@@ -130,12 +130,11 @@ void Shape::moveBy(int deltaX, int deltaY){
 
 //rotate the object by theta degree clockwise
 void Shape::Rotate(int theta){
-	erase();
-	center = calculate_center(edges);
 	for(int i=0; i<edges.size(); i++){
 		edges[i].moveBy(-center.getX(), -center.getY());
-		edges[i].moveBy(center.getX(), center.getY());
 		edges[i].rotate(theta);
+		edges[i].moveBy(center.getX(), center.getY());
+		
 	}
 	floodfill_seed.moveBy(-center.getX(), -center.getY());
 	floodfill_seed.rotate(theta);

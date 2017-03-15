@@ -57,6 +57,6 @@ Point Circle::getCenter(){
 
 void Circle::zoom(Point c, float s){
 	erase();
-	center.scaleUp(c,s);
+	center = center.scaleUp(c,s);
 	radius *= s;
 }
